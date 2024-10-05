@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.fragment.onboard.OnBoardPagingFragment">
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:fontFamily="@font/font_potta_one"
+        android:text="@string/notes"
+        android:layout_marginTop="52dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_animation"
+        android:layout_marginTop="32dp"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_name"
+        android:layout_width="286dp"
+        android:layout_height="264dp" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_marginTop="46dp"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lottie_animation"
+        tools:text="Удобство"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tv_description"
+        tools:text="Создавайте заметки в два клика! Записывайте мысли, идеи и важные задачи мгновенно."
+        android:textColor="@color/gray"
+        android:textAlignment="center"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        app:layout_constraintStart_toStartOf="@id/lottie_animation"
+        app:layout_constraintEnd_toEndOf="@id/lottie_animation"
+        android:layout_width="@id/lottie_animation"
+        android:layout_height="wrap_content" />
+</androidx.constraintlayout.widget.ConstraintLayout>
