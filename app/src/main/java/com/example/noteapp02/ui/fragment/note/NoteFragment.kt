@@ -27,7 +27,6 @@ class NoteFragment : Fragment() {
     }
 
     private fun initialize() {
-
     }
 
     private fun setupListeners() {
