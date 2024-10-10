@@ -3,4 +3,5 @@
     <string name="start">Начать</string>
     <string name="skip">Пропустить</string>
     <string name="notes">Notes</string>
+    <string name="all_notes">Все заметки</string>
 </resources>
