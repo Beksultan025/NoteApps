@@ -11,13 +11,13 @@
         android:label="fragment_on_board"
         tools:layout="@layout/fragment_on_board" />
     <fragment
-        android:id="@+id/onBoardPagingFragment"
-        android:name="com.example.noteapp02.ui.fragment.onboard.OnBoardPagingFragment"
-        android:label="fragment_on_board_paging"
-        tools:layout="@layout/fragment_on_board_paging" />
-    <fragment
         android:id="@+id/noteFragment"
         android:name="com.example.noteapp02.ui.fragment.note.NoteFragment"
         android:label="fragment_note"
         tools:layout="@layout/fragment_note" />
+    <fragment
+        android:id="@+id/noteDetailFragment"
+        android:name="com.example.noteapp02.ui.fragment.note.NoteDetailFragment"
+        android:label="fragment_note_detail"
+        tools:layout="@layout/fragment_note_detail" />
 </navigation>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:backgroundTint="@color/yellow"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="12dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_margin="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:textSize="16sp"
+        tools:text="План на жизнь:"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_description"
+            android:textColor="@color/black"
+            android:layout_marginTop="2dp"
+            app:layout_constraintStart_toStartOf="@id/tv_title"
+            tools:text="Посадить сына, вырастить дом, построить дерево. Нужно..."
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:textStyle="bold"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/gray"
+            tools:text="31 мая 12:45"
+            app:layout_constraintStart_toStartOf="@id/tv_description"
+            app:layout_constraintTop_toBottomOf="@id/tv_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
