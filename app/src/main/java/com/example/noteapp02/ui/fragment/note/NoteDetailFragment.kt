@@ -23,7 +23,9 @@ class NoteDetailFragment : Fragment() {
 
     private lateinit var binding: FragmentNoteDetailBinding
     private lateinit var popupView: ColorPickerDialogBinding
-    private var selectedView : View? = null
+    private var selectedView: View? = null
+    private var backgroundColorView: Int? = null
+    private var noteId = -1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,8 +41,10 @@ class NoteDetailFragment : Fragment() {
         initialize()
         setupListeners()
         isEditTextEmpty()
+        data()
         setupPopup()
     }
+
 
     private fun initialize() = with(binding) {
         tvTime.text = SimpleDateFormat("dd MMMM HH:mm", Locale("ru")).format(Date())
@@ -68,46 +72,67 @@ class NoteDetailFragment : Fragment() {
         }
         etTitle.doAfterTextChanged(textWatcher)
         etDescription.doAfterTextChanged(textWatcher)
+    }
+
+    private fun data() = with(binding) {
+        val args = arguments?.getInt("note", -1)
+        val data = App.appDatabase?.noteDao()?.getNoteById(args!!)
+        noteId = args!!
+
+        etTitle.setText(data?.title)
+        etDescription.setText(data?.title)
+        backgroundColorView = data?.backgroundColor
 
         tvReady.setOnClickListener {
-            App.appDatabase?.noteDao()
-                ?.insertNote(
-                    NoteModel(
-                        etTitle.text.toString(),
-                        etDescription.text.toString(),
-                        tvTime.text.toString(),
-                        selectedView?.backgroundTintList?.defaultColor!!
-                    )
+            if (noteId != -1) {
+                val noteModel = NoteModel(
+                    etTitle.text.toString(),
+                    etDescription.text.toString(),
+                    tvTime.text.toString(),
+                    backgroundColor = backgroundColorView!!
                 )
+                noteModel.id = noteId
+                App.appDatabase?.noteDao()?.updateNote(noteModel)
+            } else {
+                App.appDatabase?.noteDao()
+                    ?.insertNote(
+                        NoteModel(
+                            etTitle.text.toString(),
+                            etDescription.text.toString(),
+                            tvTime.text.toString(),
+                            backgroundColor = backgroundColorView ?: R.color.yellow
+                        )
+                    )
+            }
             findNavController().navigateUp()
         }
     }
 
     private fun setupPopup() = with(popupView) {
-        selectedView = colorYellow
 
-        setOnClickListener(colorYellow)
-        setOnClickListener(colorPurple)
-        setOnClickListener(colorPink)
-        setOnClickListener(colorRed)
-        setOnClickListener(colorGreen)
-        setOnClickListener(colorBlue)
-    }
-
-    private fun setOnClickListener(view: View)  {
-        view.setOnClickListener {
-            selectedView?.foreground = null
-            selectedView?.foreground = getDrawable(resources, R.drawable.corner_view_choose , null)
+        val listColorsView =
+            arrayListOf(colorYellow, colorPurple, colorRed, colorPink, colorBlue, colorGreen)
+        listColorsView.forEach { view ->
+            view.setOnClickListener {
+                onClickView(view)
+                backgroundColorView =  view.backgroundTintList?.defaultColor
+            }
         }
     }
 
-    private fun showCustomPopup(anchorView: View) {
+    private fun onClickView(view: View) {
+        selectedView?.foreground = null
+        selectedView = view
+        selectedView?.foreground = getDrawable(resources, R.drawable.corner_view_choose, null)
+    }
+
+    private fun showCustomPopup(view: View) {
         val popupWindow = PopupWindow(
             popupView.root,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             true
         )
-        popupWindow.showAsDropDown(anchorView, 0, 0) // Можно изменить смещение по X и Y
+        popupWindow.showAsDropDown(view, 0, 0)
     }
 }

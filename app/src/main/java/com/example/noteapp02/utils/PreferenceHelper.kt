@@ -2,6 +2,7 @@ package com.example.noteapp02.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.recyclerview.widget.LinearLayoutManager
 
 class PreferenceHelper {
 
@@ -14,4 +15,12 @@ class PreferenceHelper {
     var isShowOnBoard : Boolean
         get() = sharedPreferences.getBoolean("board" , false)
         set(value) = sharedPreferences.edit().putBoolean("board" , value).apply()
+
+    var isGoogleAuthSuccess : Boolean
+        get() = sharedPreferences.getBoolean("google" , false)
+        set(value) = sharedPreferences.edit().putBoolean("google" , value).apply()
+
+    var layoutManager : Boolean
+        get() = sharedPreferences.getBoolean("lManager" , true)
+        set(value) = sharedPreferences.edit().putBoolean("lManager" , value).apply()
 }
