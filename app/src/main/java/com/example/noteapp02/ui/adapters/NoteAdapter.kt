@@ -1,18 +1,18 @@
 package com.example.noteapp02.ui.adapters
 
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.noteapp02.App
 import com.example.noteapp02.data.db.models.NoteModel
 import com.example.noteapp02.databinding.ItemNoteBinding
+import com.example.noteapp02.interfaces.OnClickListeners
 
-class NoteAdapter : ListAdapter<NoteModel, NoteAdapter.NoteViewHolder>(DiffCallback()) {
+class NoteAdapter(
+    private val onLongClick: OnClickListeners,
+    private val onClick: OnClickListeners
+) : ListAdapter<NoteModel, NoteAdapter.NoteViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         return NoteViewHolder(
@@ -27,29 +27,26 @@ class NoteAdapter : ListAdapter<NoteModel, NoteAdapter.NoteViewHolder>(DiffCallb
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         holder.onBind(getItem(position))
         holder.itemView.setOnLongClickListener {
-            AlertDialog.Builder(holder.itemView.context)
-                .setTitle("Удаление элемента")
-                .setMessage("Вы точно хотите удалить этот элемент?")
-                .setPositiveButton("Да"){ _, _ ->
-                    App.appDatabase?.noteDao()?.deleteAllNotes(getItem(position))
-                }.setNegativeButton("Нет"){ dialog, _ ->
-                    dialog.dismiss()
-                }.show()
+            onLongClick.onLongClickItem(getItem(position))
             true
+        }
+        holder.itemView.setOnClickListener {
+            onClick.onClickItem(getItem(position))
         }
     }
 
     class NoteViewHolder(private val binding: ItemNoteBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun onBind(item: NoteModel?) {
-            binding.tvTitle.text = item?.title
-            binding.tvDescription.text = item?.description
-            binding.tvTime.text = item?.time
+        fun onBind(noteModel: NoteModel)  = with(binding){
+            tvTitle.text = noteModel.title
+            tvDescription.text = noteModel.description
+            tvTime.text = noteModel.time
+            container.setBackgroundColor(noteModel.backgroundColor!!)
         }
     }
 }
 
-class DiffCallback : DiffUtil.ItemCallback<NoteModel>(){
+class DiffCallback : DiffUtil.ItemCallback<NoteModel>() {
     override fun areItemsTheSame(oldItem: NoteModel, newItem: NoteModel): Boolean {
         return oldItem.id == newItem.id
     }
