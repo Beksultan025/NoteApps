@@ -16,6 +16,10 @@ class PreferenceHelper {
         get() = sharedPreferences.getBoolean("board" , false)
         set(value) = sharedPreferences.edit().putBoolean("board" , value).apply()
 
+    var isGoogleAuthSuccess : Boolean
+        get() = sharedPreferences.getBoolean("google" , false)
+        set(value) = sharedPreferences.edit().putBoolean("google" , value).apply()
+
     var layoutManager : Boolean
         get() = sharedPreferences.getBoolean("lManager" , true)
         set(value) = sharedPreferences.edit().putBoolean("lManager" , value).apply()
