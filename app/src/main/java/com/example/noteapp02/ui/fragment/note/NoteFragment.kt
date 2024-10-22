@@ -67,6 +67,10 @@ class NoteFragment : Fragment(), OnClickListeners {
                 binding.imgShape.setImageResource(R.drawable.img_layout_manager)
             }
         }
+
+        binding.imgMenu.setOnClickListener {
+            findNavController().navigate(R.id.chatFragment)
+        }
     }
 
     private fun getAllNotes() {
