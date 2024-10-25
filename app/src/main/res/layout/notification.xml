@@ -1,46 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="wrap_content">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint_layout"
-        android:background="@color/white"
-        android:layout_margin="12dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="12dp"
+        android:background="@color/white">
 
         <ImageView
             android:id="@+id/img_logo_notification"
-            android:src="@drawable/img_logo"
             android:layout_width="85dp"
-            android:layout_height="85dp" />
+            android:layout_height="85dp"
+            android:src="@drawable/img_logo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_title_notification"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            tools:text="Title"
-            android:layout_marginTop="12dp"
-            android:layout_marginStart="12dp"
-            android:layout_toRightOf="@id/img_logo_notification"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/img_logo_notification"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:text="Title" />
 
         <TextView
             android:id="@+id/tv_message_notification"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            tools:text="Title"
-            android:layout_marginBottom="12dp"
-            android:layout_marginStart="12dp"
-            android:layout_below="@id/tv_title_notification"
-            android:layout_toRightOf="@id/img_logo_notification"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </RelativeLayout>
-</RelativeLayout>
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/tv_title_notification"
+            app:layout_constraintStart_toEndOf="@id/img_logo_notification"
+            android:layout_below="@id/tv_title_notification"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="12dp"
+            android:textColor="@color/white_gray"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:text="Title" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
