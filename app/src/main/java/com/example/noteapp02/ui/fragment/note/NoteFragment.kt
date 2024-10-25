@@ -56,15 +56,17 @@ class NoteFragment : Fragment(), OnClickListeners {
             findNavController().navigate(R.id.noteDetailFragment)
         }
         binding.imgShape.setOnClickListener {
-            layoutManager = !layoutManager
-            if (layoutManager) {
-                preferences.layoutManager = true
-                binding.rvNotes.layoutManager = LinearLayoutManager(context)
-                binding.imgShape.setImageResource(R.drawable.img_shape)
-            } else {
-                preferences.layoutManager = false
-                binding.rvNotes.layoutManager = GridLayoutManager(context, 2)
-                binding.imgShape.setImageResource(R.drawable.img_layout_manager)
+            if(noteAdapter.currentList.isNotEmpty()) {
+                layoutManager = !layoutManager
+                if (layoutManager) {
+                    preferences.layoutManager = true
+                    binding.rvNotes.layoutManager = LinearLayoutManager(context)
+                    binding.imgShape.setImageResource(R.drawable.img_shape)
+                } else {
+                    preferences.layoutManager = false
+                    binding.rvNotes.layoutManager = GridLayoutManager(context, 2)
+                    binding.imgShape.setImageResource(R.drawable.img_layout_manager)
+                }
             }
         }
 

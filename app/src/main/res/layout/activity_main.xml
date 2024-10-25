@@ -10,7 +10,6 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_splash"
-        android:visibility="visible"
         app:lottie_enableMergePathsForKitKatAndAbove="true"
         app:lottie_rawRes="@raw/splash_screen"
         app:lottie_loop="true"
@@ -21,7 +20,6 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/container"
         app:defaultNavHost="true"
-        android:visibility="gone"
         app:navGraph="@navigation/nav_graph"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
