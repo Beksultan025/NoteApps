@@ -1,0 +1,273 @@
+Index: app/src/main/java/com/example/noteapp02/ui/fragment/note/NoteDetailFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.noteapp02.ui.fragment.note\n\nimport android.os.Bundle\nimport android.text.Editable\nimport android.view.LayoutInflater\nimport android.view.View\nimport android.view.ViewGroup\nimport android.widget.PopupWindow\nimport androidx.core.content.res.ResourcesCompat.getDrawable\nimport androidx.core.widget.doAfterTextChanged\nimport androidx.fragment.app.Fragment\nimport androidx.navigation.fragment.findNavController\nimport com.example.noteapp02.App\nimport com.example.noteapp02.R\nimport com.example.noteapp02.data.db.models.NoteModel\nimport com.example.noteapp02.databinding.ColorPickerDialogBinding\nimport com.example.noteapp02.databinding.FragmentNoteDetailBinding\nimport java.text.SimpleDateFormat\nimport java.util.Date\nimport java.util.Locale\n\nclass NoteDetailFragment : Fragment() {\n\n    private lateinit var binding: FragmentNoteDetailBinding\n    private lateinit var popupView: ColorPickerDialogBinding\n    private var selectedView: View? = null\n    private var backgroundColorView: Int? = null\n    private var noteId = -1\n\n    override fun onCreateView(\n        inflater: LayoutInflater, container: ViewGroup?,\n        savedInstanceState: Bundle?\n    ): View {\n        binding = FragmentNoteDetailBinding.inflate(inflater, container, false)\n        popupView = ColorPickerDialogBinding.inflate(inflater, container, false)\n        return binding.root\n    }\n\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\n        super.onViewCreated(view, savedInstanceState)\n        initialize()\n        setupListeners()\n        isEditTextEmpty()\n        data()\n        setupPopup()\n    }\n\n\n    private fun initialize() = with(binding) {\n        tvTime.text = SimpleDateFormat(\"dd MMMM HH:mm\", Locale(\"ru\")).format(Date())\n\n    }\n\n    private fun setupListeners() = with(binding) {\n        imgMoreOptions.setOnClickListener { view ->\n            showCustomPopup(view)\n        }\n        imgBack.setOnClickListener {\n            findNavController().navigateUp()\n        }\n    }\n\n    private fun isEditTextEmpty() = with(binding) {\n        tvReady.visibility = View.GONE\n        val textWatcher = { _: Editable? ->\n            tvReady.visibility =\n                if (etTitle.text.isNotEmpty() && etDescription.text.isNotEmpty()) {\n                    View.VISIBLE\n                } else {\n                    View.GONE\n                }\n        }\n        etTitle.doAfterTextChanged(textWatcher)\n        etDescription.doAfterTextChanged(textWatcher)\n    }\n\n    private fun data() = with(binding) {\n        val args = arguments?.getInt(\"note\", -1)\n        val data = App.appDatabase?.noteDao()?.getNoteById(args!!)\n        noteId = args!!\n\n        etTitle.setText(data?.title)\n        etDescription.setText(data?.title)\n        backgroundColorView = data?.backgroundColor\n\n        tvReady.setOnClickListener {\n            if (noteId != -1) {\n                val noteModel = NoteModel(\n                    etTitle.text.toString(),\n                    etDescription.text.toString(),\n                    tvTime.text.toString(),\n                    backgroundColor = backgroundColorView!!\n                )\n                noteModel.id = noteId\n                App.appDatabase?.noteDao()?.updateNote(noteModel)\n            } else {\n                App.appDatabase?.noteDao()\n                    ?.insertNote(\n                        NoteModel(\n                            etTitle.text.toString(),\n                            etDescription.text.toString(),\n                            tvTime.text.toString(),\n                            backgroundColor = backgroundColorView ?: R.color.yellow\n                        )\n                    )\n            }\n            findNavController().navigateUp()\n        }\n    }\n\n    private fun setupPopup() = with(popupView) {\n\n        val listColorsView =\n            arrayListOf(colorYellow, colorPurple, colorRed, colorPink, colorBlue, colorGreen)\n        listColorsView.forEach { view ->\n            view.setOnClickListener {\n                onClickView(view)\n                backgroundColorView =  view.backgroundTintList?.defaultColor\n            }\n        }\n    }\n\n    private fun onClickView(view: View) {\n        selectedView?.foreground = null\n        selectedView = view\n        selectedView?.foreground = getDrawable(resources, R.drawable.corner_view_choose, null)\n    }\n\n    private fun showCustomPopup(view: View) {\n        val popupWindow = PopupWindow(\n            popupView.root,\n            ViewGroup.LayoutParams.WRAP_CONTENT,\n            ViewGroup.LayoutParams.WRAP_CONTENT,\n            true\n        )\n        popupWindow.showAsDropDown(view, 0, 0)\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/noteapp02/ui/fragment/note/NoteDetailFragment.kt b/app/src/main/java/com/example/noteapp02/ui/fragment/note/NoteDetailFragment.kt
+--- a/app/src/main/java/com/example/noteapp02/ui/fragment/note/NoteDetailFragment.kt	(revision ef1c3118b1d3922b163578538348292239d35a22)
++++ b/app/src/main/java/com/example/noteapp02/ui/fragment/note/NoteDetailFragment.kt	(date 1729504050032)
+@@ -115,7 +115,7 @@
+         listColorsView.forEach { view ->
+             view.setOnClickListener {
+                 onClickView(view)
+-                backgroundColorView =  view.backgroundTintList?.defaultColor
++                backgroundColorView = view.backgroundTintList?.defaultColor
+             }
+         }
+     }
+Index: app/src/main/java/com/example/noteapp02/ui/fragment/note/NoteFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.noteapp02.ui.fragment.note\n\nimport android.app.AlertDialog\nimport android.os.Bundle\nimport android.view.LayoutInflater\nimport android.view.View\nimport android.view.ViewGroup\nimport androidx.fragment.app.Fragment\nimport androidx.navigation.fragment.findNavController\nimport androidx.recyclerview.widget.GridLayoutManager\nimport androidx.recyclerview.widget.LinearLayoutManager\nimport com.example.noteapp02.App\nimport com.example.noteapp02.R\nimport com.example.noteapp02.data.db.models.NoteModel\nimport com.example.noteapp02.databinding.FragmentNoteBinding\nimport com.example.noteapp02.interfaces.OnClickListeners\nimport com.example.noteapp02.ui.adapters.NoteAdapter\nimport com.example.noteapp02.utils.PreferenceHelper\n\nclass NoteFragment : Fragment(), OnClickListeners {\n\n    private lateinit var binding: FragmentNoteBinding\n    private val preferences = PreferenceHelper()\n    private val noteAdapter = NoteAdapter(this, this)\n    private var layoutManager = true\n\n    override fun onCreateView(\n        inflater: LayoutInflater, container: ViewGroup?,\n        savedInstanceState: Bundle?\n    ): View {\n        binding = FragmentNoteBinding.inflate(inflater, container, false)\n        return binding.root\n    }\n\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\n        super.onViewCreated(view, savedInstanceState)\n        initialize()\n        setupListeners()\n        getAllNotes()\n    }\n\n    private fun initialize() = with(binding) {\n        preferences.unit(requireContext())\n        if (preferences.layoutManager) {\n            rvNotes.layoutManager = LinearLayoutManager(context)\n            imgShape.setImageResource(R.drawable.img_shape)\n        } else {\n            rvNotes.layoutManager = GridLayoutManager(context, 2)\n            imgShape.setImageResource(R.drawable.img_layout_manager)\n        }\n        rvNotes.adapter = noteAdapter\n    }\n\n    private fun setupListeners() {\n        binding.btnAdd.setOnClickListener {\n            findNavController().navigate(R.id.noteDetailFragment)\n        }\n        binding.imgShape.setOnClickListener {\n            layoutManager = !layoutManager\n            if (layoutManager) {\n                preferences.layoutManager = true\n                binding.rvNotes.layoutManager = LinearLayoutManager(context)\n                binding.imgShape.setImageResource(R.drawable.img_shape)\n            } else {\n                preferences.layoutManager = false\n                binding.rvNotes.layoutManager = GridLayoutManager(context, 2)\n                binding.imgShape.setImageResource(R.drawable.img_layout_manager)\n            }\n        }\n    }\n\n    private fun getAllNotes() {\n        App.appDatabase?.noteDao()?.getAllNotes()?.observe(viewLifecycleOwner) { note ->\n            noteAdapter.submitList(note)\n        }\n    }\n\n    override fun onLongClickItem(noteModel: NoteModel) {\n        AlertDialog.Builder(requireContext())\n            .setTitle(\"Удаление элемента\")\n            .setMessage(\"Вы точно хотите удалить этот элемент?\")\n            .setPositiveButton(\"Да\") { _, _ ->\n                App.appDatabase?.noteDao()?.deleteAllNote(noteModel)\n            }.setNegativeButton(\"Нет\") { dialog, _ ->\n                dialog.dismiss()\n            }\n            .create()\n            .show()\n    }\n\n    override fun onClickItem(noteModel: NoteModel) {\n        val argument = NoteFragmentDirections.actionNoteFragmentToNoteDetailFragment(noteModel.id)\n        findNavController().navigate(argument)\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/noteapp02/ui/fragment/note/NoteFragment.kt b/app/src/main/java/com/example/noteapp02/ui/fragment/note/NoteFragment.kt
+--- a/app/src/main/java/com/example/noteapp02/ui/fragment/note/NoteFragment.kt	(revision ef1c3118b1d3922b163578538348292239d35a22)
++++ b/app/src/main/java/com/example/noteapp02/ui/fragment/note/NoteFragment.kt	(date 1729504050034)
+@@ -56,15 +56,17 @@
+             findNavController().navigate(R.id.noteDetailFragment)
+         }
+         binding.imgShape.setOnClickListener {
+-            layoutManager = !layoutManager
+-            if (layoutManager) {
+-                preferences.layoutManager = true
+-                binding.rvNotes.layoutManager = LinearLayoutManager(context)
+-                binding.imgShape.setImageResource(R.drawable.img_shape)
+-            } else {
+-                preferences.layoutManager = false
+-                binding.rvNotes.layoutManager = GridLayoutManager(context, 2)
+-                binding.imgShape.setImageResource(R.drawable.img_layout_manager)
++            if (noteAdapter.currentList.isNotEmpty()) {
++                layoutManager = !layoutManager
++                if (layoutManager) {
++                    preferences.layoutManager = true
++                    binding.rvNotes.layoutManager = LinearLayoutManager(context)
++                    binding.imgShape.setImageResource(R.drawable.img_shape)
++                } else {
++                    preferences.layoutManager = false
++                    binding.rvNotes.layoutManager = GridLayoutManager(context, 2)
++                    binding.imgShape.setImageResource(R.drawable.img_layout_manager)
++                }
+             }
+         }
+     }
+Index: app/src/main/java/com/example/noteapp02/ui/activity/MainActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.noteapp02.ui.activity\n\nimport android.os.Bundle\nimport androidx.appcompat.app.AppCompatActivity\nimport androidx.navigation.fragment.NavHostFragment\nimport androidx.recyclerview.widget.GridLayoutManager\nimport androidx.recyclerview.widget.LinearLayoutManager\nimport com.example.noteapp02.R\nimport com.example.noteapp02.databinding.ActivityMainBinding\nimport com.example.noteapp02.utils.PreferenceHelper\n\nclass MainActivity : AppCompatActivity() {\n\n    private val binding by lazy {\n        ActivityMainBinding.inflate(layoutInflater)\n    }\n    private val sharedPreferences = PreferenceHelper()\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(binding.root)\n        sharedPreferences.unit(this)\n        val navHostFragment =\n            (supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment)\n        val inflater = navHostFragment.navController.navInflater\n        val navGraph = inflater.inflate(R.navigation.nav_graph)\n\n        if (sharedPreferences.isShowOnBoard) {\n            navGraph.setStartDestination(R.id.noteFragment)\n            navHostFragment.navController.graph = navGraph\n        }\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/noteapp02/ui/activity/MainActivity.kt b/app/src/main/java/com/example/noteapp02/ui/activity/MainActivity.kt
+--- a/app/src/main/java/com/example/noteapp02/ui/activity/MainActivity.kt	(revision ef1c3118b1d3922b163578538348292239d35a22)
++++ b/app/src/main/java/com/example/noteapp02/ui/activity/MainActivity.kt	(date 1729504050036)
+@@ -1,12 +1,14 @@
+ package com.example.noteapp02.ui.activity
+ 
+ import android.os.Bundle
++import android.os.Handler
++import android.os.Looper
+ import androidx.appcompat.app.AppCompatActivity
++import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+ import androidx.navigation.fragment.NavHostFragment
+-import androidx.recyclerview.widget.GridLayoutManager
+-import androidx.recyclerview.widget.LinearLayoutManager
+ import com.example.noteapp02.R
+ import com.example.noteapp02.databinding.ActivityMainBinding
++import com.example.noteapp02.databinding.SplashScreneBinding
+ import com.example.noteapp02.utils.PreferenceHelper
+ 
+ class MainActivity : AppCompatActivity() {
+@@ -14,20 +16,18 @@
+     private val binding by lazy {
+         ActivityMainBinding.inflate(layoutInflater)
+     }
++    private val splashBinding : SplashScreneBinding by lazy {
++        SplashScreneBinding.inflate(layoutInflater)
++    }
+     private val sharedPreferences = PreferenceHelper()
+ 
+     override fun onCreate(savedInstanceState: Bundle?) {
+         super.onCreate(savedInstanceState)
+-        setContentView(binding.root)
+-        sharedPreferences.unit(this)
+-        val navHostFragment =
+-            (supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment)
+-        val inflater = navHostFragment.navController.navInflater
+-        val navGraph = inflater.inflate(R.navigation.nav_graph)
++        setContentView(splashBinding.root)
++
++        Handler(Looper.getMainLooper()).postDelayed({
++            setContentView(binding.root)
++        }, 3000L)
+ 
+-        if (sharedPreferences.isShowOnBoard) {
+-            navGraph.setStartDestination(R.id.noteFragment)
+-            navHostFragment.navController.graph = navGraph
+-        }
+     }
+ }
+\ No newline at end of file
+Index: gradle/libs.versions.toml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>[versions]\nkotlin = \"2.0.0\"\nagp = \"8.6.1\"\ncoreKtx = \"1.13.1\"\njunit = \"4.13.2\"\njunitVersion = \"1.2.1\"\nespressoCore = \"3.6.1\"\nappcompat = \"1.7.0\"\nlottie = \"3.4.0\"\nmaterial = \"1.12.0\"\nactivity = \"1.9.2\"\nconstraintlayout = \"2.1.4\"\nnavigationFragmentKtx = \"2.8.2\"\nroomKtx = \"2.6.1\"\n\n[libraries]\nandroidx-core-ktx = { group = \"androidx.core\", name = \"core-ktx\", version.ref = \"coreKtx\" }\nandroidx-navigation-fragment-ktx = { module = \"androidx.navigation:navigation-fragment-ktx\", version.ref = \"navigationFragmentKtx\" }\nandroidx-navigation-ui-ktx = { module = \"androidx.navigation:navigation-ui-ktx\", version.ref = \"navigationFragmentKtx\" }\nandroidx-room-compiler = { module = \"androidx.room:room-compiler\", version.ref = \"roomKtx\" }\nandroidx-room-ktx = { module = \"androidx.room:room-ktx\", version.ref = \"roomKtx\" }\njunit = { group = \"junit\", name = \"junit\", version.ref = \"junit\" }\nandroidx-junit = { group = \"androidx.test.ext\", name = \"junit\", version.ref = \"junitVersion\" }\nandroidx-espresso-core = { group = \"androidx.test.espresso\", name = \"espresso-core\", version.ref = \"espressoCore\" }\nandroidx-appcompat = { group = \"androidx.appcompat\", name = \"appcompat\", version.ref = \"appcompat\" }\nlottie = { module = \"com.airbnb.android:lottie\", version.ref = \"lottie\" }\nmaterial = { group = \"com.google.android.material\", name = \"material\", version.ref = \"material\" }\nandroidx-activity = { group = \"androidx.activity\", name = \"activity\", version.ref = \"activity\" }\nandroidx-constraintlayout = { group = \"androidx.constraintlayout\", name = \"constraintlayout\", version.ref = \"constraintlayout\" }\n\n[plugins]\nandroid-application = { id = \"com.android.application\", version.ref = \"agp\" }\nkotlin-android = { id = \"org.jetbrains.kotlin.android\", version.ref = \"kotlin\" }\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/gradle/libs.versions.toml b/gradle/libs.versions.toml
+--- a/gradle/libs.versions.toml	(revision ef1c3118b1d3922b163578538348292239d35a22)
++++ b/gradle/libs.versions.toml	(date 1729504050037)
+@@ -1,4 +1,5 @@
+ [versions]
++coreSplashscreen = "1.0.1"
+ kotlin = "2.0.0"
+ agp = "8.6.1"
+ coreKtx = "1.13.1"
+@@ -15,6 +16,7 @@
+ 
+ [libraries]
+ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
++androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+ androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
+ androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationFragmentKtx" }
+ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtx" }
+Index: app/src/main/res/values/themes.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources xmlns:tools=\"http://schemas.android.com/tools\">\n    <!-- Base application theme. -->\n    <style name=\"Theme.NoteApp02\" parent=\"Theme.Material3.DayNight.NoActionBar\">\n        <!-- Customize your light theme here. -->\n        <!-- <item name=\"colorPrimary\">@color/my_light_primary</item> -->\n\n        <item name=\"android:windowTranslucentStatus\" >false</item>\n        <item name=\"android:itemBackground\">@color/dark_gray</item>\n        <item name=\"android:textColor\">#FF0000</item>\n        <item name=\"android:statusBarColor\" >@color/black</item>\n    </style>\n\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/themes.xml b/app/src/main/res/values/themes.xml
+--- a/app/src/main/res/values/themes.xml	(revision ef1c3118b1d3922b163578538348292239d35a22)
++++ b/app/src/main/res/values/themes.xml	(date 1729504050038)
+@@ -3,11 +3,7 @@
+     <style name="Theme.NoteApp02" parent="Theme.Material3.DayNight.NoActionBar">
+         <!-- Customize your light theme here. -->
+         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+-
+-        <item name="android:windowTranslucentStatus" >false</item>
+-        <item name="android:itemBackground">@color/dark_gray</item>
+-        <item name="android:textColor">#FF0000</item>
+         <item name="android:statusBarColor" >@color/black</item>
++        <item name="android:windowTranslucentStatus" >false</item>
+     </style>
+-
+ </resources>
+\ No newline at end of file
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:tools=\"http://schemas.android.com/tools\">\n\n    <application\n        android:name=\".App\"\n        android:allowBackup=\"true\"\n        android:dataExtractionRules=\"@xml/data_extraction_rules\"\n        android:fullBackupContent=\"@xml/backup_rules\"\n        android:icon=\"@mipmap/ic_launcher\"\n        android:label=\"@string/app_name\"\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\n        android:supportsRtl=\"true\"\n        android:theme=\"@style/Theme.NoteApp02\"\n        tools:targetApi=\"31\">\n        <activity\n            android:exported=\"true\"\n            android:name=\".ui.activity.MainActivity\">\n            <intent-filter>\n                <action android:name=\"android.intent.action.MAIN\" />\n\n                <category android:name=\"android.intent.category.LAUNCHER\" />\n            </intent-filter>\n        </activity>\n    </application>\n\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	(revision ef1c3118b1d3922b163578538348292239d35a22)
++++ b/app/src/main/AndroidManifest.xml	(date 1729504050039)
+@@ -7,18 +7,18 @@
+         android:allowBackup="true"
+         android:dataExtractionRules="@xml/data_extraction_rules"
+         android:fullBackupContent="@xml/backup_rules"
+-        android:icon="@mipmap/ic_launcher"
++        android:icon="@mipmap/logo"
+         android:label="@string/app_name"
+-        android:roundIcon="@mipmap/ic_launcher_round"
++        android:roundIcon="@mipmap/logo_round"
+         android:supportsRtl="true"
+         android:theme="@style/Theme.NoteApp02"
+         tools:targetApi="31">
+         <activity
+             android:exported="true"
++            android:theme="@style/Theme.NoteApp02"
+             android:name=".ui.activity.MainActivity">
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+-
+                 <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
+         </activity>
+Index: app/src/main/res/layout/color_picker_dialog.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n    android:layout_width=\"wrap_content\"\n    android:layout_height=\"wrap_content\"\n    android:layout_gravity=\"center\"\n    android:orientation=\"vertical\"\n    android:background=\"@drawable/corner_view\"\n    android:padding=\"14dp\"\n    android:backgroundTint=\"@color/gray\">\n\n    <androidx.constraintlayout.widget.ConstraintLayout\n        android:layout_width=\"match_parent\"\n        android:layout_height=\"match_parent\">\n\n        <TextView\n            android:id=\"@+id/tv_delete\"\n            android:layout_width=\"0dp\"\n            android:textSize=\"18sp\"\n            android:layout_height=\"wrap_content\"\n            android:text=\"Удалить\"\n            android:textColor=\"#FF3B3B\"\n            app:drawableEndCompat=\"@drawable/img_delete\"\n            app:layout_constraintEnd_toEndOf=\"parent\"\n            app:layout_constraintStart_toStartOf=\"parent\"\n            app:layout_constraintTop_toTopOf=\"parent\" />\n\n        <View\n            android:layout_marginTop=\"4dp\"\n            android:background=\"@color/white_gray\"\n            app:layout_constraintEnd_toEndOf=\"parent\"\n            app:layout_constraintStart_toStartOf=\"parent\"\n            app:layout_constraintTop_toBottomOf=\"@id/tv_delete\"\n            android:layout_width=\"0dp\"\n            android:layout_height=\"1dp\" />\n\n        <TextView\n            android:id=\"@+id/tv_change_color\"\n            android:layout_width=\"wrap_content\"\n            android:layout_height=\"wrap_content\"\n            android:layout_marginTop=\"12dp\"\n            android:text=\"Поменять цвет\"\n            android:textSize=\"16sp\"\n            android:textColor=\"@color/white\"\n            app:layout_constraintStart_toStartOf=\"parent\"\n            app:layout_constraintTop_toBottomOf=\"@id/tv_delete\" />\n\n        <GridLayout\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"wrap_content\"\n            android:paddingVertical=\"12dp\"\n            android:columnCount=\"3\"\n            app:layout_constraintTop_toBottomOf=\"@id/tv_change_color\">\n\n            <View\n                android:background=\"@drawable/corner_view_choose\"\n                android:backgroundTint=\"@color/yellow\"\n                android:foreground=\"@drawable/corner_view_choose\"\n                android:layout_marginEnd=\"6dp\"\n                android:id=\"@+id/color_yellow\"\n                android:layout_width=\"60dp\"\n                android:layout_height=\"45dp\"\n                />\n\n\n            <View\n                android:background=\"@drawable/corner_view_choose\"\n                android:backgroundTint=\"@color/purple\"\n                app:cardCornerRadius=\"4dp\"\n                android:id=\"@+id/color_purple\"\n                android:layout_width=\"60dp\"\n                android:layout_height=\"45dp\"\n                android:layout_marginEnd=\"6dp\"/>\n\n            <View\n                android:background=\"@drawable/corner_view_choose\"\n                app:cardCornerRadius=\"4dp\"\n                android:id=\"@+id/color_pink\"\n                android:layout_width=\"60dp\"\n                android:layout_height=\"45dp\"\n                android:backgroundTint=\"@color/pink\" />\n\n            <View\n                android:background=\"@drawable/corner_view_choose\"\n                app:cardCornerRadius=\"4dp\"\n                android:id=\"@+id/color_red\"\n                android:layout_width=\"60dp\"\n                android:layout_marginTop=\"4dp\"\n                android:layout_height=\"45dp\"\n                android:layout_marginEnd=\"6dp\"\n                android:backgroundTint=\"@color/red\" />\n\n            <View\n                android:background=\"@drawable/corner_view_choose\"\n                app:cardCornerRadius=\"4dp\"\n                android:id=\"@+id/color_green\"\n                android:layout_width=\"60dp\"\n                android:layout_marginTop=\"4dp\"\n                android:layout_height=\"45dp\"\n                android:layout_marginEnd=\"6dp\"\n                android:backgroundTint=\"@color/green\" />\n\n            <View\n                app:cardCornerRadius=\"4dp\"\n                android:id=\"@+id/color_blue\"\n                android:layout_width=\"60dp\"\n                android:layout_marginTop=\"4dp\"\n                android:layout_height=\"45dp\"\n                android:background=\"@drawable/corner_view_choose\"\n                android:backgroundTint=\"@color/blue\" />\n        </GridLayout>\n    </androidx.constraintlayout.widget.ConstraintLayout>\n</LinearLayout>\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/color_picker_dialog.xml b/app/src/main/res/layout/color_picker_dialog.xml
+--- a/app/src/main/res/layout/color_picker_dialog.xml	(revision ef1c3118b1d3922b163578538348292239d35a22)
++++ b/app/src/main/res/layout/color_picker_dialog.xml	(date 1729504050040)
+@@ -54,7 +54,6 @@
+             <View
+                 android:background="@drawable/corner_view_choose"
+                 android:backgroundTint="@color/yellow"
+-                android:foreground="@drawable/corner_view_choose"
+                 android:layout_marginEnd="6dp"
+                 android:id="@+id/color_yellow"
+                 android:layout_width="60dp"
+Index: app/build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\n    alias(libs.plugins.android.application)\n    alias(libs.plugins.kotlin.android)\n    id(\"com.google.devtools.ksp\")\n    id(\"androidx.navigation.safeargs.kotlin\")\n}\n\nandroid {\n    namespace = \"com.example.noteapp02\"\n    compileSdk = 34\n\n    defaultConfig {\n        applicationId = \"com.example.noteapp02\"\n        minSdk = 24\n        targetSdk = 34\n        versionCode = 1\n        versionName = \"1.0\"\n\n        testInstrumentationRunner = \"androidx.test.runner.AndroidJUnitRunner\"\n    }\n\n    buildTypes {\n        release {\n            isMinifyEnabled = false\n            proguardFiles(\n                getDefaultProguardFile(\"proguard-android-optimize.txt\"),\n                \"proguard-rules.pro\"\n            )\n        }\n    }\n    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_1_8\n        targetCompatibility = JavaVersion.VERSION_1_8\n    }\n    kotlinOptions {\n        jvmTarget = \"1.8\"\n    }\n\n    buildFeatures.viewBinding = true\n}\n\ndependencies {\n\n    implementation(libs.androidx.core.ktx)\n    implementation(libs.androidx.appcompat)\n    implementation(libs.material)\n    implementation(libs.androidx.activity)\n    implementation(libs.androidx.constraintlayout)\n    testImplementation(libs.junit)\n    androidTestImplementation(libs.androidx.junit)\n    androidTestImplementation(libs.androidx.espresso.core)\n\n    //Navigation\n    implementation(libs.androidx.navigation.fragment.ktx)\n    implementation(libs.androidx.navigation.ui.ktx)\n\n    //Lottie\n    implementation (libs.lottie)\n\n    //Room\n    implementation(libs.androidx.room.ktx)\n    ksp(libs.androidx.room.compiler)\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle.kts b/app/build.gradle.kts
+--- a/app/build.gradle.kts	(revision ef1c3118b1d3922b163578538348292239d35a22)
++++ b/app/build.gradle.kts	(date 1729504050042)
+@@ -55,10 +55,12 @@
+     implementation(libs.androidx.navigation.ui.ktx)
+ 
+     //Lottie
+-    implementation (libs.lottie)
++    implementation(libs.lottie)
+ 
++    //SplashScreen
++    implementation(libs.androidx.core.splashscreen)
++
+     //Room
+     implementation(libs.androidx.room.ktx)
+     ksp(libs.androidx.room.compiler)
+-
+ }
+\ No newline at end of file
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources>\n    <string name=\"app_name\">NoteApp02</string>\n    <string name=\"start\">Начать</string>\n    <string name=\"skip\">Пропустить</string>\n    <string name=\"notes\">Notes</string>\n    <string name=\"all_notes\">Все заметки</string>\n    <!-- TODO: Remove or change this placeholder text -->\n    <string name=\"hello_blank_fragment\">Hello blank fragment</string>\n    <string name=\"ready\">Готово</string>\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+--- a/app/src/main/res/values/strings.xml	(revision ef1c3118b1d3922b163578538348292239d35a22)
++++ b/app/src/main/res/values/strings.xml	(date 1729504050045)
+@@ -1,5 +1,5 @@
+ <resources>
+-    <string name="app_name">NoteApp02</string>
++    <string name="app_name">NoteApp</string>
+     <string name="start">Начать</string>
+     <string name="skip">Пропустить</string>
+     <string name="notes">Notes</string>
+Index: .idea/deploymentTargetSelector.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"deploymentTargetSelector\">\n    <selectionStates>\n      <SelectionState runConfigName=\"app\">\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\n        <DropdownSelection timestamp=\"2024-10-12T15:05:03.023467Z\">\n          <Target type=\"DEFAULT_BOOT\">\n            <handle>\n              <DeviceId pluginId=\"LocalEmulator\" identifier=\"path=/Users/ukuevbeksultan/.android/avd/Pixel_4_API_TiramisuPrivacySandbox.avd\" />\n            </handle>\n          </Target>\n        </DropdownSelection>\n        <DialogSelection />\n      </SelectionState>\n    </selectionStates>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetSelector.xml b/.idea/deploymentTargetSelector.xml
+--- a/.idea/deploymentTargetSelector.xml	(revision ef1c3118b1d3922b163578538348292239d35a22)
++++ b/.idea/deploymentTargetSelector.xml	(date 1729504050047)
+@@ -4,7 +4,7 @@
+     <selectionStates>
+       <SelectionState runConfigName="app">
+         <option name="selectionMode" value="DROPDOWN" />
+-        <DropdownSelection timestamp="2024-10-12T15:05:03.023467Z">
++        <DropdownSelection timestamp="2024-10-19T11:46:22.806847Z">
+           <Target type="DEFAULT_BOOT">
+             <handle>
+               <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ukuevbeksultan/.android/avd/Pixel_4_API_TiramisuPrivacySandbox.avd" />
