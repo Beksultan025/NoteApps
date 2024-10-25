@@ -34,4 +34,9 @@
         android:name="com.example.noteapp02.ui.fragment.signup.SignUpFragment"
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up" />
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.noteapp02.ui.fragment.chat.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
 </navigation>

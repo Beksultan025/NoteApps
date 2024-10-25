@@ -56,7 +56,7 @@ class NoteFragment : Fragment(), OnClickListeners {
             findNavController().navigate(R.id.noteDetailFragment)
         }
         binding.imgShape.setOnClickListener {
-            if (noteAdapter.currentList.isNotEmpty()) {
+            if(noteAdapter.currentList.isNotEmpty()) {
                 layoutManager = !layoutManager
                 if (layoutManager) {
                     preferences.layoutManager = true
@@ -68,6 +68,10 @@ class NoteFragment : Fragment(), OnClickListeners {
                     binding.imgShape.setImageResource(R.drawable.img_layout_manager)
                 }
             }
+        }
+
+        binding.imgMenu.setOnClickListener {
+            findNavController().navigate(R.id.chatFragment)
         }
     }
 

@@ -54,13 +54,11 @@
             <View
                 android:background="@drawable/corner_view_choose"
                 android:backgroundTint="@color/yellow"
-                android:foreground="@drawable/corner_view_choose"
                 android:layout_marginEnd="6dp"
                 android:id="@+id/color_yellow"
                 android:layout_width="60dp"
                 android:layout_height="45dp"
                 />
-
 
             <View
                 android:background="@drawable/corner_view_choose"

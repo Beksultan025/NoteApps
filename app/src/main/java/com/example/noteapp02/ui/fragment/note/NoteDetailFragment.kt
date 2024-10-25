@@ -48,7 +48,6 @@ class NoteDetailFragment : Fragment() {
 
     private fun initialize() = with(binding) {
         tvTime.text = SimpleDateFormat("dd MMMM HH:mm", Locale("ru")).format(Date())
-
     }
 
     private fun setupListeners() = with(binding) {
@@ -80,7 +79,7 @@ class NoteDetailFragment : Fragment() {
         noteId = args!!
 
         etTitle.setText(data?.title)
-        etDescription.setText(data?.title)
+        etDescription.setText(data?.description)
         backgroundColorView = data?.backgroundColor
 
         tvReady.setOnClickListener {
@@ -109,7 +108,6 @@ class NoteDetailFragment : Fragment() {
     }
 
     private fun setupPopup() = with(popupView) {
-
         val listColorsView =
             arrayListOf(colorYellow, colorPurple, colorRed, colorPink, colorBlue, colorGreen)
         listColorsView.forEach { view ->
