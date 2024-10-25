@@ -66,7 +66,7 @@ class OnBoardFragment : Fragment() {
         binding.btnStart.setOnClickListener {
             sharedPreferences.isShowOnBoard = true
             findNavController().navigate(
-                R.id.noteFragment,
+                R.id.signUpFragment,
                 null,
                 NavOptions.Builder().setPopUpTo(R.id.nav_graph_xml, true)
                     .build()
